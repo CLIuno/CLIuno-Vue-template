@@ -1,8 +1,8 @@
 {
-  "name": "backendvue",
+  "name": "frontendvitevue",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview --port 4173",
     "test:unit": "vitest --environment jsdom",
