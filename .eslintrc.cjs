@@ -6,13 +6,13 @@ module.exports = {
   'extends': [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
-    '@vue/eslint-config-typescript',
-    '@vue/eslint-config-prettier'
+    '@vue/eslint-config-prettier/skip-formatting',
+    'plugin:cypress/recommended'
   ],
   overrides: [
     {
       files: [
-        'cypress/e2e/**.{cy,spec}.{js,ts,jsx,tsx}'
+        'cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}'
       ],
       'extends': [
         'plugin:cypress/recommended'
@@ -20,6 +20,14 @@ module.exports = {
     }
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
-  }
+    ecmaVersion: 'latest',
+    sourceType: 'module'
+  },
+  'rules': { 'vue/multi-word-component-names': 'off' },
+  "env": {
+    "browser": true,
+    "amd": true,
+    "node": true
+  },
+
 }

@@ -1,0 +1,19 @@
+import { useStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
+
+export const useCounterStore = defineStore('counterId', {
+  state: () => ({
+    count: useStorage('count', 0),
+  }),
+  getters: {
+    doubleCount: (state) => state.count * 2,
+  },
+  actions: {
+    increment() {
+      this.count++
+    },
+    decrement() {
+      this.count--
+    }
+  }
+})
