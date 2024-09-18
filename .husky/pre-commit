@@ -1,0 +1,7 @@
+pnpm test:unit
+
+pnpm type-check
+
+pnpm lint:fix
+
+npx lint-staged

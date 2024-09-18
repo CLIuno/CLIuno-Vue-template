@@ -1,8 +1,7 @@
-<template>
-  <HomeItemComp />
-</template>
+<script setup lang="ts"></script>
 
-<script setup>
-// import components
-import HomeItemComp from '@/components/HomeItemComp.vue'
-</script>
+<template>
+  <main>
+    <h1 class="tw-text-red-700">Home</h1>
+  </main>
+</template>
