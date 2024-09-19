@@ -1,12 +1,12 @@
 # vue Cliuno template
 
-a vue 3 starter template or boilerplate with a lot of useful features. and integrated with TailwindCSS 3.  
+a vue 3 starter template or boilerplate with a lot of useful features. and integrated with TailwindCSS 3.
 
 This template was built to make it easier to create web projects using Vue 3.
 
 > **NOTES**
 >
-> - This Project using "pnpm" as package manager. (not npm or yarn)!!!  
+> - This Project using "pnpm" as package manager. (not npm or yarn)!!!
 
 ## Features
 
@@ -64,7 +64,7 @@ For detail information, go here [Getting Started](https://vue3-awesome-starter.v
 - Run `pnpm generate` to build the project
 
 - Serve `dist/` folder
-Checkout the [deployment documentation](https://v3.vuejs.org/docs/deployment).
+  Checkout the [deployment documentation](https://v3.vuejs.org/docs/deployment).
 
 ## Built-in Components
 
@@ -130,7 +130,7 @@ ThemeManager is a plugin that allows you to switch between themes. this lib in :
 ```vue
 <!-- /path/to/app.vue -->
 <script lang="ts" setup>
-import { AppSetup } from '~/utils/app';
+import { AppSetup } from '~/utils/app'
 // app setup
 AppSetup()
 </script>
@@ -173,7 +173,7 @@ lang construct inside `AppSetup()` in `/path/to/app.vue` :\
 ```vue
 <!-- /path/to/app.vue -->
 <script lang="ts" setup>
-import { AppSetup } from '~/utils/app';
+import { AppSetup } from '~/utils/app'
 // app setup
 AppSetup()
 </script>
@@ -254,3 +254,98 @@ configuration in : `/path/to/.husky/pre-commit` and `/path/to/commitlint.config.
 
 And when Postmerge, it will run "pnpm" to automatically install new dependencies.
 configuration in `/path/to/.husky/post-merge`
+
+## list of endpoints
+
+### Auth
+
+| Status | Endpoint Description    | Method | Path                             |
+| ------ | ----------------------- | ------ | -------------------------------- |
+| [x]    | Login                   | POST   | `/api/v1/auth/login`             |
+| [ ]    | Register                | POST   | `/api/v1/auth/register`          |
+| [ ]    | Logout                  | POST   | `/api/v1/auth/logout`            |
+| [x]    | Reset Password          | POST   | `/api/v1/auth/reset-password`    |
+| [x]    | Forgot Password         | POST   | `/api/v1/auth/forgot-password`   |
+| [x]    | Change Password         | POST   | `/api/v1/auth/change-password`   |
+| [x]    | Send Verification Email | POST   | `/api/v1/auth/send-verify-email` |
+| [x]    | Verify Email            | POST   | `/api/v1/auth/verify-email`      |
+| [ ]    | Check Token             | POST   | `/api/v1/auth/check-token`       |
+| [ ]    | Refresh Token           | POST   | `/api/v1/auth/refresh-token`     |
+| [x]    | Verify OTP              | POST   | `/api/v1/auth/otp/verify`        |
+| [x]    | Disable OTP             | POST   | `/api/v1/auth/otp/disable`       |
+| [x]    | Validate OTP            | POST   | `/api/v1/auth/otp/validate`      |
+| [x]    | Generate OTP            | POST   | `/api/v1/auth/otp/generate`      |
+
+### Users
+
+| Status | Endpoint Description    | Method | Path                                 |
+| ------ | ----------------------- | ------ | ------------------------------------ |
+| [ ]    | Get all current user    | GET    | `/api/v1/users/current`              |
+| [ ]    | Get user by username    | GET    | `/api/v1/users/username/:username`   |
+| [ ]    | Get all users           | GET    | `/api/v1/users`                      |
+| [ ]    | Get a user by ID        | GET    | `/api/v1/users/:id`                  |
+| [ ]    | Update user by ID       | PATCH  | `/api/v1/users/:id`                  |
+| [ ]    | Delete user by ID       | DELETE | `/api/v1/users/:id`                  |
+| [ ]    | Get permissions by user | GET    | `/api/v1/users/:user_id/permissions` |
+| [ ]    | Get posts by user       | GET    | `/api/v1/users/:user_id/posts`       |
+| [ ]    | Get roles by user       | GET    | `/api/v1/users/:user_id/roles`       |
+| [ ]    | Get comments by user    | GET    | `/api/v1/users/:user_id/comments`    |
+
+### Permissions
+
+| Status | Endpoint Description    | Method | Path                                       |
+| ------ | ----------------------- | ------ | ------------------------------------------ |
+| [ ]    | Get all permissions     | GET    | `/api/v1/permissions`                      |
+| [ ]    | Get permission by ID    | GET    | `/api/v1/permissions/:id`                  |
+| [ ]    | Create a permission     | POST   | `/api/v1/permissions`                      |
+| [ ]    | Update permission by ID | PATCH  | `/api/v1/permissions/:id`                  |
+| [ ]    | Delete permission by ID | DELETE | `/api/v1/permissions/:id`                  |
+| [ ]    | Get roles by permission | GET    | `/api/v1/permissions/:permission_id/roles` |
+| [ ]    | Get users by permission | GET    | `/api/v1/permissions/:permission_id/users` |
+
+### Roles
+
+| Status | Endpoint Description    | Method | Path                                 |
+| ------ | ----------------------- | ------ | ------------------------------------ |
+| [ ]    | Get all roles           | GET    | `/api/v1/roles`                      |
+| [ ]    | Get role by ID          | GET    | `/api/v1/roles/:id`                  |
+| [ ]    | Create a role           | POST   | `/api/v1/roles`                      |
+| [ ]    | Update role by ID       | PATCH  | `/api/v1/roles/:id`                  |
+| [ ]    | Delete role by ID       | DELETE | `/api/v1/roles/:id`                  |
+| [ ]    | Get permissions by role | GET    | `/api/v1/roles/:role_id/permissions` |
+| [ ]    | Get users by role       | GET    | `/api/v1/roles/:role_id/users`       |
+
+### User Role Permission
+
+| Status | Endpoint Description                  | Method | Path                                |
+| ------ | ------------------------------------- | ------ | ----------------------------------- |
+| [ ]    | Get all user-role-permission mappings | GET    | `/api/v1/user-role-permissions`     |
+| [ ]    | Get user-role-permission by ID        | GET    | `/api/v1/user-role-permissions/:id` |
+| [ ]    | Create a user-role-permission mapping | POST   | `/api/v1/user-role-permissions`     |
+| [ ]    | Update user-role-permission by ID     | PATCH  | `/api/v1/user-role-permissions/:id` |
+| [ ]    | Delete user-role-permission by ID     | DELETE | `/api/v1/user-role-permissions/:id` |
+
+### Posts
+
+| Status | Endpoint Description       | Method | Path                              |
+| ------ | -------------------------- | ------ | --------------------------------- |
+| [ ]    | Get all current user posts | GET    | `/api/v1/posts/current-user`      |
+| [ ]    | Get all posts              | GET    | `/api/v1/posts`                   |
+| [ ]    | Get post by ID             | GET    | `/api/v1/posts/:id`               |
+| [ ]    | Create a post              | POST   | `/api/v1/posts`                   |
+| [ ]    | Update post by ID          | PATCH  | `/api/v1/posts/:id`               |
+| [ ]    | Delete post by ID          | DELETE | `/api/v1/posts/:id`               |
+| [ ]    | Get users by post          | GET    | `/api/v1/posts/:post_id/user`     |
+| [ ]    | Get comments by post       | GET    | `/api/v1/posts/:post_id/comments` |
+
+### Comments
+
+| Status | Endpoint Description                     | Method | Path                                |
+| ------ | ---------------------------------------- | ------ | ----------------------------------- |
+| [ ]    | Get all comments for the current context | GET    | `/api/v1/comments/current`          |
+| [ ]    | Get all comments                         | GET    | `/api/v1/comments`                  |
+| [ ]    | Get comment by ID                        | GET    | `/api/v1/comments/:id`              |
+| [ ]    | Create a comment                         | POST   | `/api/v1/comments`                  |
+| [ ]    | Update comment by ID                     | PATCH  | `/api/v1/comments/:id`              |
+| [ ]    | Delete comment by ID                     | DELETE | `/api/v1/comments/:id`              |
+| [ ]    | Get users by comment                     | GET    | `/api/v1/comments/:comment_id/user` |
