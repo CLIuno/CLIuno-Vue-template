@@ -1,11 +1,5 @@
-<script setup>
-import { RouterView } from 'vue-router'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <VLocaleProvider>
-    <vApp id="inspire">
-      <RouterView />
-    </vApp>
-  </VLocaleProvider>
+  <RouterView />
 </template>
