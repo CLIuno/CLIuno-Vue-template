@@ -1,0 +1,7 @@
+services:
+  cliuno-vue-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'

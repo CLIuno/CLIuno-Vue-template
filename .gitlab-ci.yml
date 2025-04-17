@@ -1,0 +1,26 @@
+stages:
+  - build
+  - test
+
+variables:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "8"
+
+image: node:${NODE_VERSION}
+
+before_script:
+  - corepack enable
+  - corepack prepare pnpm@${PNPM_VERSION} --activate
+  - pnpm --version
+  - node --version
+  - pnpm install
+
+build:
+  stage: build
+  script:
+    - pnpm build
+
+test:
+  stage: test
+  script:
+    - pnpm test:unit
