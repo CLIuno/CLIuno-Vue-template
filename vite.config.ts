@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'path'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import vue from '@vitejs/plugin-vue'
@@ -6,11 +7,13 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
+    tailwindcss(),
     vueDevTools(),
     Components({ dts: true }),
     AutoImport({
@@ -21,32 +24,43 @@ export default defineConfig({
         '@vueuse/core',
         'pinia',
         {
+          vuetify: [
+            'useTheme', // Automatically import useTheme from Vuetify
+            'useLocale', // Automatically import useLocale from Vuetify
+            // Add any other Vuetify composables you need
+          ],
+        },
+        {
           axios: [
             // import default export
-            ['default', 'axios']
-          ]
-        }
+            ['default', 'axios'],
+          ],
+        },
       ],
       dts: 'src/auto-imports.d.ts',
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
         /\.vue$/,
         /\.vue\?vue/, // .vue
-        /\.md$/ // .md
+        /\.md$/, // .md
       ],
       resolvers: [
         ((name: any) => {
           if (/^use[A-Z]/.test(name)) {
             return { importName: name, path: `@/composables/${name}` }
           }
-        }) as any
-      ]
+        }) as any,
+      ],
     }),
-    tailwindcss()
+    VueI18nPlugin({
+      /* options */
+      // locale messages resource pre-compile option
+      include: [path.resolve(__dirname, './src/i18n/**')],
+    }),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 })

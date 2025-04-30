@@ -2,7 +2,8 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './helpers'
 
 // 👉 Required Validator
 export const requiredValidator = (value: unknown) => {
-  if (isNullOrUndefined(value) || isEmptyArray(value) || value === false) return 'This field is required'
+  if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
+    return 'This field is required'
 
   return !!String(value).trim().length || 'This field is required'
 }
@@ -12,9 +13,10 @@ export const emailValidator = (value: unknown) => {
   if (isEmpty(value)) return true
 
   const re =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-  if (Array.isArray(value)) return value.every((val) => re.test(String(val))) || 'The Email field must be a valid email'
+  if (Array.isArray(value))
+    return value.every((val) => re.test(String(val))) || 'The Email field must be a valid email'
 
   return re.test(String(value)) || 'The Email field must be a valid email'
 }
@@ -39,7 +41,10 @@ export const confirmedValidator = (value: string, target: string) =>
 export const betweenValidator = (value: unknown, min: number, max: number) => {
   const valueAsNumber = Number(value)
 
-  return (Number(min) <= valueAsNumber && Number(max) >= valueAsNumber) || `Enter number between ${min} and ${max}`
+  return (
+    (Number(min) <= valueAsNumber && Number(max) >= valueAsNumber) ||
+    `Enter number between ${min} and ${max}`
+  )
 }
 
 // 👉 Integer Validator
@@ -84,7 +89,10 @@ export const urlValidator = (value: unknown) => {
 export const lengthValidator = (value: unknown, length: number) => {
   if (isEmpty(value)) return true
 
-  return String(value).length === length || `The Min Character field must be at least ${length} characters`
+  return (
+    String(value).length === length ||
+    `The Min Character field must be at least ${length} characters`
+  )
 }
 
 // 👉 Alpha-dash Validator

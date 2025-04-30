@@ -1,11 +1,43 @@
 <script setup lang="ts">
-const showMenu = ref(false)
-const toggleNavbar = () => {
-  showMenu.value = !showMenu.value
-}
+import { Icon } from '@iconify/vue'
+import { useDark, useToggle } from '@vueuse/core'
+
+const isDark = useDark({
+  selector: 'html',
+  attribute: 'data-theme',
+  valueDark: 'dark',
+  valueLight: 'light',
+})
+
+const toggleTheme = useToggle(isDark)
 </script>
 
 <template>
+  <header class="tw:bg-base-100 tw:shadow-sm tw:px-6 tw:py-3">
+    <nav class="tw:flex tw:items-center tw:justify-between tw:container tw:mx-auto">
+      <!-- Logo -->
+      <div class="tw:flex tw:items-center tw:gap-2">
+        <Icon icon="mdi:rocket-launch-outline" class="tw:w-6 tw:h-6 tw:text-primary" />
+        <span class="tw:text-xl tw:font-bold tw:text-primary">Cliuno</span>
+      </div>
+
+      <!-- Right section -->
+      <div class="tw:flex tw:items-center tw:gap-3">
+        <!-- Theme toggle -->
+        <button
+          class="tw:btn tw:btn-sm tw:btn-ghost"
+          aria-label="Toggle Theme"
+          @click="() => toggleTheme()"
+        >
+          <Icon
+            :icon="isDark ? 'line-md:moon-filled-alt-loop' : 'line-md:sunny-filled-loop'"
+            class="tw:w-5 tw:h-5"
+          />
+        </button>
+
+        <!-- Main action -->
+        <button class="tw:btn tw:btn-sm tw:btn-primary">Get Started</button>
+
   <nav class="bg-white shadow-md fixed top-0 w-full z-50">
     <div class="container mx-auto px-4 py-3 flex items-center justify-between">
       <!-- Logo -->
@@ -38,6 +70,6 @@ const toggleNavbar = () => {
           </li>
         </ul>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 </template>

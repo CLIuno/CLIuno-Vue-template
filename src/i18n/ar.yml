@@ -1,0 +1,74 @@
+search: بحث
+mode: الوضع
+components:
+  language_switcher:
+    change_language: تغيير اللغة
+  theme_switcher:
+    theme: سمة
+    change_theme: غير الخلفية
+pages:
+  '404':
+    title: الصفحة غير موجودة
+  index:
+    title: com.c4istar
+  blank:
+    nav: فارغ
+    title: صفحة فارغة
+    description: هذه صفحة فارغة
+    just_blank_page_with_title: مجرد صفحة فارغة مع العنوان
+  post:
+    nav: بريد
+    title: بريد
+    description: هذه صفحة مشاركة
+  test:
+    nav: امتحان
+    title: اختبارات
+    description: هذه هي صفحة اختبار
+    counter: عداد
+    increment: زيادة راتب
+    decrement: إنقاص
+    reset: إعادة ضبط
+    identity: هوية
+    full_name: الاسم الكامل
+  getting-started:
+    nav: ابدء
+    title: ابدء
+    description: هذه صفحة البدء
+  setting:
+    nav: جلسة
+    title: جلسة
+    description: هذه صفحة الإعداد
+    sections:
+      validate_username:
+        title: التحقق من صحة ملف تعريف جيثب
+        description: اكتب اسم مستخدم github الخاص بك وانقر فوق الزر للتحقق من الصحة.
+        footer: تعلم المزيد عن
+        footer_button: التحقق من صحة
+        footer_link: واجهة برمجة تطبيقات مستخدمي جيثب
+      bot_id:
+        title: معرف الروبوت
+        description: هذا هو معرف الروبوت الخاص بك.
+        footer: يتم استخدامه عند التفاعل مع الروبوت.
+      protection_spam:
+        title: الحماية من البريد المزعج
+        description: تبديل تمكين لإزالة الحدود الحمراء
+        footer: إذا تم التمكين، فسنقوم بتأمين تعليقاتك من البريد العشوائي
+      advanced_enable_advanced:
+        title: تمكين الإعدادات المتقدمة
+        description: يمكنك تمكين الإعدادات المتقدمة لتغيير الإعدادات
+      advanced_dir_listing:
+        title: سرد الدليل
+        description: في حالة عدم وجود ملف فهرس داخل الدليل، سيتم عرض محتويات الدليل.
+  dashboard:
+    nav: لوحة القيادة
+    title: لوحة القيادة
+    index:
+      nav: بيت
+      title: بيت
+banners:
+  welcome: مرحبًا، مرحبًا بك في %{app_name}!
+others:
+  learn_more: يتعلم أكثر
+  copy: ينسخ
+  enabled: ممكّن
+  disabled: عاجز
