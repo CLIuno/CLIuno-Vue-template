@@ -1,25 +1,34 @@
-FROM node:lts-alpine
+# ---- Stage 1: Builder ----
+    FROM node:lts-alpine3.21 AS builder
 
-# install simple http server for serving static content
-RUN npm install -g pnpm npm-run-all2
-
-# make the 'app' folder the current working directory
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
-
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
-
-# Remove .env file if it exists
-RUN rm -f .env
-
-# Replace .env with .env.dev
-RUN cp .env.dev .env
-
-EXPOSE 5000
-
-CMD [ "pnpm", "dev" ]
+    ENV NODE_ENV=production
+    
+    WORKDIR /app
+    RUN npm install -g pnpm npm-run-all2 http-server
+    
+    COPY package.json pnpm-lock.yaml ./
+    RUN pnpm install --no-frozen-lockfile
+    
+    COPY . .
+    RUN pnpm build
+    
+    # Remove all devDependencies
+    RUN pnpm prune --prod
+    
+    # Install node-prune for further cleaning
+    RUN wget https://gobinaries.com/tj/node-prune --output-document - | /bin/sh && node-prune
+    
+    # ---- Stage 2: Runner ----
+    FROM node:lts-alpine3.21 AS runtime
+    
+    WORKDIR /app
+    
+    # Copy only the build output from the builder stage
+    COPY --from=builder /app/dist ./dist
+    COPY --from=builder /app/package.json ./package.json
+    
+    # Expose the port for the application
+    EXPOSE 5000
+    
+    # Command to run the application
+    CMD [ "http-server", "dist" ]
