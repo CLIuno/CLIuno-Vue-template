@@ -1,17 +1,14 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import http from './http'
 
-const BASE_URL = process.env.BACKEND_URL
-
-// The roleApi object contains methods to interact with the role endpoints of the backend.
 const roleApi = {
-  getAllRoles: () => axios.get(`${BASE_URL}/roles`),
-  getRoleById: (id: string) => axios.get(`${BASE_URL}/roles/${id}`),
-  createRole: (roleData: any) => axios.post(`${BASE_URL}/roles`, roleData),
-  updateRoleById: (id: string, roleData: any) => axios.patch(`${BASE_URL}/roles/${id}`, roleData),
-  deleteRoleById: (id: string) => axios.delete(`${BASE_URL}/roles/${id}`),
-  getPermissionsByRole: (roleId: string) => axios.get(`${BASE_URL}/roles/${roleId}/permissions`),
-  getUsersByRole: (roleId: string) => axios.get(`${BASE_URL}/roles/${roleId}/users`)
+  getAllRoles: () => http.get('/roles'),
+  getRoleById: (id: string) => http.get(`/roles/${id}`),
+  createRole: (roleData: Record<string, unknown>) => http.post('/roles', roleData),
+  updateRoleById: (id: string, roleData: Record<string, unknown>) =>
+    http.patch(`/roles/${id}`, roleData),
+  deleteRoleById: (id: string) => http.delete(`/roles/${id}`),
+  getPermissionsByRole: (roleId: string) => http.get(`/roles/${roleId}/permissions`),
+  getUsersByRole: (roleId: string) => http.get(`/roles/${roleId}/users`),
 }
 
 export default roleApi

@@ -1,34 +1,70 @@
-name: Build and Push Docker Image
+name: build-docker-image-ci
 
 on:
   workflow_run:
-    workflows: ['main-ci']
+    workflows: ["main-ci"]
     types:
       - completed
+    branches: ["develop"]
+  workflow_call:
+    inputs:
+      tag:
+        description: "Docker image tag"
+        required: false
+        type: string
+        default: "latest"
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  build:
+    if: ${{ github.event_name == 'workflow_call' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push') }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: "${{ github.repository_owner }}"
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+      - name: Set lower case repository name
+        run: |
+          echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
+        env:
+          REPO: "${{ github.event.repository.name }}"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile.prod
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/kpress-app-post-service:latest
-          platforms: linux/amd64,linux/arm64
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            docker build -t ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:develop \
+              --build-arg NODE_ENV=production \
+              -f ./Dockerfile .
+            docker push ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:develop
+          else
+            # For this workflow, any non-workflow_run execution is a workflow_call.
+            # The tag is provided via the workflow_call input 'tag'.
+            TAG="${{ inputs.tag }}"
+            if [ -z "${TAG}" ]; then
+              echo "Error: Docker image tag is not set for event '${{ github.event_name }}'. Please provide a tag input." >&2
+              exit 1
+            fi
+            docker build \
+              -t ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${TAG} \
+              -t ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:latest \
+              --build-arg NODE_ENV=production \
+              -f ./Dockerfile .
+            docker push ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${TAG}
+            docker push ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:latest
+          fi

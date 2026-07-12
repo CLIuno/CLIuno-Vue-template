@@ -1,17 +1,14 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import http from './http'
 
-const BASE_URL = process.env.BACKEND_URL
-
-// The permissionApi object contains methods to interact with the permission endpoints of the backend.
 const permissionApi = {
-  getAllPermissions: () => axios.get(`${BASE_URL}/permissions`),
-  getPermissionById: (id: string) => axios.get(`${BASE_URL}/permissions/${id}`),
-  createPermission: (permissionData: any) => axios.post(`${BASE_URL}/permissions`, permissionData),
-  updatePermissionById: (id: string, permissionData: any) =>
-    axios.patch(`${BASE_URL}/permissions/${id}`, permissionData),
-  deletePermissionById: (id: string) => axios.delete(`${BASE_URL}/permissions/${id}`),
-  getRolesByPermission: (permissionId: string) => axios.get(`${BASE_URL}/permissions/${permissionId}/roles`),
-  getUsersByPermission: (permissionId: string) => axios.get(`${BASE_URL}/permissions/${permissionId}/users`)
+  getAllPermissions: () => http.get('/permissions'),
+  getPermissionById: (id: string) => http.get(`/permissions/${id}`),
+  createPermission: (permissionData: Record<string, unknown>) =>
+    http.post('/permissions', permissionData),
+  updatePermissionById: (id: string, permissionData: Record<string, unknown>) =>
+    http.patch(`/permissions/${id}`, permissionData),
+  deletePermissionById: (id: string) => http.delete(`/permissions/${id}`),
+  getRolesByPermission: (permissionId: string) => http.get(`/permissions/${permissionId}/roles`),
+  getUsersByPermission: (permissionId: string) => http.get(`/permissions/${permissionId}/users`),
 }
 export default permissionApi

@@ -1,62 +1,113 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const usernameOrEmail = ref('')
+const password = ref('')
+const showPassword = ref(false)
+
+async function handleLogin() {
+  if (!usernameOrEmail.value || !password.value) return
+  try {
+    await authStore.login(usernameOrEmail.value, password.value)
+  } catch {
+    // error handled in store
+  }
+}
+</script>
+
 <template>
-  <div class="w-full lg:w-4/12 px-4">
-    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
-      <div class="rounded-t mb-0 px-6 py-6">
-        <div class="text-center mb-3">
-          <h6 class="text-gray-600 text-sm font-bold">Sign in with</h6>
+  <div class="tw:min-h-screen tw:flex tw:items-center tw:justify-center tw:bg-base-200 tw:px-4">
+    <div class="tw:card tw:w-full tw:max-w-md tw:bg-base-100 tw:shadow-xl">
+      <div class="tw:card-body tw:p-8">
+        <!-- Logo -->
+        <div class="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:mb-2">
+          <Icon icon="mdi:rocket-launch-outline" class="tw:w-8 tw:h-8 tw:text-primary" />
+          <span class="tw:text-2xl tw:font-bold tw:text-primary">CLIuno</span>
         </div>
-      </div>
-      <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
-        <div class="text-gray-500 text-center mb-3 font-bold"></div>
-        <form>
-          <div class="relative w-full mb-3">
-            <label class="block uppercase text-gray-700 text-xs font-bold mb-2" for="grid-password"> Email</label>
-            <input
-              type="email"
-              class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-              placeholder="Email"
-              style="transition: all 0.15s ease 0s"
-            />
-          </div>
-          <div class="relative w-full mb-3">
-            <label class="block uppercase text-gray-700 text-xs font-bold mb-2" for="grid-password">Password</label
-            ><input
-              type="password"
-              class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-              placeholder="Password"
-              style="transition: all 0.15s ease 0s"
-            />
-          </div>
-          <div>
-            <label class="inline-flex items-center cursor-pointer"
-              ><input
-                id="customCheckLogin"
-                type="checkbox"
-                class="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
-                style="transition: all 0.15s ease 0s"
+
+        <h2 class="tw:text-2xl tw:font-bold tw:text-center tw:mb-1">Welcome back</h2>
+        <p class="tw:text-center tw:text-base-content/60 tw:mb-6">Sign in to your account</p>
+
+        <!-- Error Alert -->
+        <div v-if="authStore.error" class="tw:alert tw:alert-error tw:mb-4">
+          <Icon icon="mdi:alert-circle" class="tw:w-5 tw:h-5" />
+          <span>{{ authStore.error }}</span>
+        </div>
+
+        <form @submit.prevent="handleLogin" class="tw:space-y-4">
+          <!-- Email/Username -->
+          <fieldset class="tw:fieldset">
+            <legend class="tw:fieldset-legend">Email or Username</legend>
+            <div class="tw:input tw:w-full">
+              <Icon icon="mdi:account-outline" class="tw:h-[1em] tw:opacity-50" />
+              <input
+                id="login-username"
+                v-model="usernameOrEmail"
+                type="text"
+                placeholder="Enter your email or username"
+                class="tw:grow"
+                required
               />
-              <span class="ml-2 text-sm font-semibold text-gray-700">Remember me</span>
-            </label>
-          </div>
-          <div class="text-center mt-6">
-            <button
-              class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-              type="button"
-              style="transition: all 0.15s ease 0s"
+            </div>
+          </fieldset>
+
+          <!-- Password -->
+          <fieldset class="tw:fieldset">
+            <legend class="tw:fieldset-legend">Password</legend>
+            <div class="tw:input tw:w-full">
+              <Icon icon="mdi:lock-outline" class="tw:h-[1em] tw:opacity-50" />
+              <input
+                id="login-password"
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Enter your password"
+                class="tw:grow"
+                required
+              />
+              <button
+                type="button"
+                @click.prevent="showPassword = !showPassword"
+                class="tw:btn tw:btn-ghost tw:btn-xs tw:btn-circle"
+              >
+                <Icon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="tw:w-4 tw:h-4" />
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- Forgot Password -->
+          <div class="tw:flex tw:justify-end">
+            <RouterLink
+              :to="{ name: 'forgot-password' }"
+              class="tw:link tw:link-primary tw:text-sm"
             >
-              Sign In
-            </button>
+              Forgot password?
+            </RouterLink>
           </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="tw:btn tw:btn-primary tw:w-full"
+            :class="{ 'tw:loading': authStore.loading }"
+            :disabled="authStore.loading"
+          >
+            <Icon v-if="!authStore.loading" icon="mdi:login" class="tw:w-5 tw:h-5" />
+            {{ authStore.loading ? 'Signing in...' : 'Sign In' }}
+          </button>
         </form>
-      </div>
-    </div>
-    <div class="flex flex-wrap mt-6">
-      <div class="w-1/2">
-        <a href="#pablo" class="text-gray-300"><small>Forgot password?</small></a>
-      </div>
-      <div class="w-1/2 text-right">
-        <a href="#pablo" class="text-gray-300"><small>Create new account</small></a>
+
+        <!-- Divider -->
+        <div class="tw:divider tw:text-sm">Don't have an account?</div>
+
+        <!-- Register Link -->
+        <RouterLink
+          :to="{ name: 'register' }"
+          class="tw:btn tw:btn-outline tw:btn-secondary tw:w-full"
+        >
+          <Icon icon="mdi:account-plus-outline" class="tw:w-5 tw:h-5" />
+          Create Account
+        </RouterLink>
       </div>
     </div>
   </div>

@@ -1,7 +1,9 @@
 import { fileURLToPath, URL } from 'node:url'
-import path from 'path'
+import path from 'node:path'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineConfig } from 'vite'
@@ -15,7 +17,18 @@ export default defineConfig({
     vueJsx(),
     tailwindcss(),
     vueDevTools(),
-    Components({ dts: true }),
+    Icons({ compiler: 'vue3', autoInstall: true }),
+    Components({
+      dts: true,
+      resolvers: [
+        IconsResolver(),
+        (componentName) => {
+          if (componentName === 'Icon') {
+            return { name: 'Icon', from: '@iconify/vue' }
+          }
+        },
+      ],
+    }),
     AutoImport({
       imports: [
         // presets

@@ -1,9 +1,9 @@
-name: version-and-release
+name: version-and-release-ci
 
 on:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   release:
@@ -13,22 +13,42 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      packages: write
+
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
 
     steps:
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
-          version: 8
+          version: 10
 
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
         with:
-          node-version: 22.x
-          cache: 'pnpm'
+          fetch-depth: 0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v5
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Copy environment file
+        run: cp .env.example .env
 
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
+        env:
+          HUSKY: 0
 
       - name: Configure Git User
         run: |
@@ -36,6 +56,18 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Release with Semantic Release
+        id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+  build-docker:
+    needs: release
+    if: ${{ needs.release.outputs.new_release_published == 'true' }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      tag: ${{ needs.release.outputs.new_release_version }}
+    secrets: inherit

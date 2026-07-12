@@ -1,21 +1,14 @@
-import axios from 'axios'
-import dotenv from 'dotenv'
-dotenv.config()
+import http from './http'
 
-const BASE_URL = process.env.BACKEND_URL
-
-// The userApi object contains methods to interact with the user endpoints of the backend.
 const userApi = {
-  getCurrentUser: () => axios.get(`${BASE_URL}/users/current`),
-  getUsers: () => axios.get(`${BASE_URL}/users`),
-  getUserByUsername: (username: string) => axios.get(`${BASE_URL}/users/username/${username}`),
-  getUserById: (id: string) => axios.get(`${BASE_URL}/users/${id}`),
-  updateUserById: (id: string, userData: any) => axios.patch(`${BASE_URL}/users/${id}`, userData),
-  deleteUserById: (id: string) => axios.delete(`${BASE_URL}/users/${id}`),
-  getPermissionsByUser: (userId: string) => axios.get(`${BASE_URL}/users/${userId}/permissions`),
-  getPostsByUser: (userId: string) => axios.get(`${BASE_URL}/users/${userId}/posts`),
-  getRolesByUser: (userId: string) => axios.get(`${BASE_URL}/users/${userId}/roles`),
-  getCommentsByUser: (userId: string) => axios.get(`${BASE_URL}/users/${userId}/comments`)
+  getCurrentUser: () => http.get('/users/current'),
+  getUsers: () => http.get('/users'),
+  getUserByUsername: (username: string) => http.get(`/users/username/${username}`),
+  getUserById: (id: string) => http.get(`/users/${id}`),
+  updateUserById: (id: string, userData: any) => http.patch(`/users/${id}`, userData),
+  deleteUserById: (id: string) => http.delete(`/users/${id}`),
+  getPostsByUser: (userId: string) => http.get(`/users/${userId}/posts`),
+  getRolesByUser: (userId: string) => http.get(`/users/${userId}/roles`),
 }
 
 export default userApi

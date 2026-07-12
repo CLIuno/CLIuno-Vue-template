@@ -1,0 +1,24 @@
+name: clean-ghcr-ci
+on:
+    workflow_dispatch:
+        inputs:
+            dry-run:
+                description: "Run in dry-run mode (no deletions). Set to 'false' to enable real deletions."
+                required: false
+                default: "true"
+    schedule:
+        - cron: "0 0 1 * *"
+jobs:
+    clean:
+        runs-on: ubuntu-latest
+        name: Delete old test images
+        steps:
+            - uses: snok/container-retention-policy@v3.0.1
+              with:
+                  account: mosab-moasherat
+                  account-type: personal
+                  token: ${{ secrets.GH_TOKEN }}
+                  image-names: "container-retention-policy"
+                  image-tags: "test* dev*"
+                  cut-off: 2w 3d
+                  dry-run: ${{ github.event_name != 'workflow_dispatch' || inputs['dry-run'] != 'false' }}

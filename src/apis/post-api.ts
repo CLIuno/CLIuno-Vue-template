@@ -1,17 +1,20 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import http from './http'
 
-const BASE_URL = process.env.BACKEND_URL
-
-// The postApi object contains methods to interact with the post endpoints of the backend.
 const postApi = {
-  getCurrentUserPosts: () => axios.get(`${BASE_URL}/posts/current-user`),
-  getAllPosts: () => axios.get(`${BASE_URL}/posts`),
-  getPostById: (id: string) => axios.get(`${BASE_URL}/posts/${id}`),
-  createPost: (postData: any) => axios.post(`${BASE_URL}/posts`, postData),
-  updatePostById: (id: string, postData: any) => axios.patch(`${BASE_URL}/posts/${id}`, postData),
-  deletePostById: (id: string) => axios.delete(`${BASE_URL}/posts/${id}`),
-  getUsersByPost: (postId: string) => axios.get(`${BASE_URL}/posts/${postId}/user`)
+  getCurrentUserPosts: () => http.get('/posts/current-user'),
+  getAllPosts: () => http.get('/posts'),
+  getPostById: (id: string) => http.get(`/posts/${id}`),
+  createPost: (postData: any) => http.post('/posts', postData),
+  updatePostById: (id: string, postData: any) => http.patch(`/posts/${id}`, postData),
+  deletePostById: (id: string) => http.delete(`/posts/${id}`),
+  getUsersByPost: (postId: string) => http.get(`/posts/${postId}/user`),
+  getComments: (postId: string) => http.get(`/posts/${postId}/comments`),
+  createComment: (postId: string, data: { content: string }) =>
+    http.post(`/posts/${postId}/comments`, data),
+  updateComment: (postId: string, commentId: string, data: { content: string }) =>
+    http.patch(`/posts/${postId}/comments/${commentId}`, data),
+  deleteComment: (postId: string, commentId: string) =>
+    http.delete(`/posts/${postId}/comments/${commentId}`),
 }
 
 export default postApi

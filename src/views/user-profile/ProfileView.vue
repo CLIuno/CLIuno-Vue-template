@@ -3,7 +3,10 @@
   <div>
     <main class="profile-page">
       <section class="relative block" style="height: 500px">
-        <div class="absolute top-0 w-full h-full bg-center bg-cover" style="background-color: #1d232a">
+        <div
+          class="absolute top-0 w-full h-full bg-center bg-cover"
+          style="background-color: #1d232a"
+        >
           <span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span>
         </div>
         <div
@@ -25,7 +28,9 @@
       </section>
       <section class="relative py-16 bg-gray-300">
         <div class="container mx-auto px-4">
-          <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+          <div
+            class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64"
+          >
             <div class="px-6">
               <div class="flex flex-wrap justify-center">
                 <div class="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
@@ -52,15 +57,18 @@
                 <div class="w-full lg:w-4/12 px-4 lg:order-1">
                   <div class="flex justify-center py-4 lg:pt-4 pt-8">
                     <div class="mr-4 p-3 text-center">
-                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700">22</span
+                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700"
+                        >22</span
                       ><span class="text-sm text-gray-500">Friends</span>
                     </div>
                     <div class="mr-4 p-3 text-center">
-                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700">10</span
+                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700"
+                        >10</span
                       ><span class="text-sm text-gray-500">Photos</span>
                     </div>
                     <div class="lg:mr-4 p-3 text-center">
-                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700">89</span
+                      <span class="text-xl font-bold block uppercase tracking-wide text-gray-700"
+                        >89</span
                       ><span class="text-sm text-gray-500">Comments</span>
                     </div>
                   </div>
@@ -73,19 +81,22 @@
                   Jeddah City, Saudi Arabia
                 </div>
                 <div class="mb-2 text-gray-700 mt-10">
-                  <i class="fas fa-briefcase mr-2 text-lg text-gray-500"></i>Product Owner - CLIuno Inc.
+                  <i class="fas fa-briefcase mr-2 text-lg text-gray-500"></i>Product Owner - CLIuno
+                  Inc.
                 </div>
                 <div class="mb-2 text-gray-700">
-                  <i class="fas fa-university mr-2 text-lg text-gray-500"></i>University of Computer Science
+                  <i class="fas fa-university mr-2 text-lg text-gray-500"></i>University of Computer
+                  Science
                 </div>
               </div>
               <div class="mt-10 py-10 border-t border-gray-300 text-center">
                 <div class="flex flex-wrap justify-center">
                   <div class="w-full lg:w-9/12 px-4">
                     <p class="mb-4 text-lg leading-relaxed text-gray-800">
-                      An artist of considerable range, Jenna the name taken by Melbourne-raised, Brooklyn-based Nick
-                      Murphy writes, performs and records all of his own music, giving it a warm, intimate feel with a
-                      solid groove structure. An artist of considerable range.
+                      An artist of considerable range, Jenna the name taken by Melbourne-raised,
+                      Brooklyn-based Nick Murphy writes, performs and records all of his own music,
+                      giving it a warm, intimate feel with a solid groove structure. An artist of
+                      considerable range.
                     </p>
                     <a href="#pablo" class="font-normal text-blue-500">Show more</a>
                   </div>

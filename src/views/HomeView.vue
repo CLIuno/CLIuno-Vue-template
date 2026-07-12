@@ -10,7 +10,7 @@
         <img
           src="https://placehold.co/600x400/"
           class="tw:max-w-sm tw:rounded-2xl tw:shadow-2xl tw:transition-transform tw:duration-500 tw:ease-in-out tw:transform-gpu hover:tw:rotate-3 hover:tw:scale-105"
-          alt="Hero image"
+          alt="Hero"
         />
         <div class="tw:animate-fade-in tw:space-y-4">
           <h1 class="tw:text-5xl tw:font-bold tw:text-primary animate-bounce">
@@ -69,7 +69,7 @@
         class="tw:flex md:tw:grid md:tw:grid-cols-3 tw:gap-6 tw:overflow-x-auto tw:scrollbar-hide tw:space-x-4 md:tw:space-x-0"
       >
         <div
-          class="tw:min-w-[280px] md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-2 tw:transform-gpu animate-pulse"
+          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-2 tw:transform-gpu animate-pulse"
         >
           <img
             src="https://placehold.co/400x200"
@@ -81,7 +81,7 @@
         </div>
 
         <div
-          class="tw:min-w-[280px] md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-2 tw:transform-gpu animate-pulse"
+          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-2 tw:transform-gpu animate-pulse"
         >
           <img
             src="https://placehold.co/400x200"
@@ -93,7 +93,7 @@
         </div>
 
         <div
-          class="tw:min-w-[280px] md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-y-3 tw:transform-gpu animate-pulse"
+          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-y-3 tw:transform-gpu animate-pulse"
         >
           <img
             src="https://placehold.co/400x200"
@@ -106,7 +106,7 @@
 
         <!-- Add more if you want -->
         <div
-          class="tw:min-w-[280px] md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-y-3 tw:transform-gpu animate-pulse"
+          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-y-3 tw:transform-gpu animate-pulse"
         >
           <img
             src="https://placehold.co/400x200"
