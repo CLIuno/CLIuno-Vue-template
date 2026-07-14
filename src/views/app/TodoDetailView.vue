@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { ArrowLeft, Check, Loader2, Pencil, Undo2 } from '@lucide/vue'
 import api from '@/apis'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
@@ -79,99 +86,84 @@ onMounted(fetchTodo)
 </script>
 
 <template>
-  <div class="tw:max-w-3xl tw:mx-auto tw:px-4 tw:py-8">
+  <div class="mx-auto max-w-3xl px-4 py-8">
     <!-- Back -->
-    <RouterLink :to="{ name: 'todos' }" class="tw:btn tw:btn-ghost tw:btn-sm tw:mb-6">
-      <Icon icon="mdi:arrow-left" class="tw:w-5 tw:h-5" />
-      Back to Todos
-    </RouterLink>
+    <Button variant="ghost" size="sm" class="mb-6" as-child>
+      <RouterLink :to="{ name: 'todos' }">
+        <ArrowLeft />
+        Back to Todos
+      </RouterLink>
+    </Button>
 
     <!-- Loading -->
-    <div v-if="loading" class="tw:flex tw:justify-center tw:py-20">
-      <span class="tw:loading tw:loading-spinner tw:loading-lg tw:text-primary"></span>
+    <div v-if="loading" class="flex justify-center py-20">
+      <Loader2 class="size-8 animate-spin text-muted-foreground" />
     </div>
 
     <template v-else-if="todo">
-      <!-- Detail Card -->
-      <div class="tw:card tw:bg-base-100 tw:shadow-lg">
-        <div class="tw:card-body">
+      <Card>
+        <CardContent>
           <template v-if="!editing">
-            <div class="tw:flex tw:items-start tw:justify-between">
-              <div>
-                <div class="tw:flex tw:items-center tw:gap-3 tw:mb-2">
-                  <span
-                    class="tw:badge"
-                    :class="todo.is_completed ? 'tw:badge-success' : 'tw:badge-warning'"
-                  >
-                    {{ todo.is_completed ? 'Completed' : 'Active' }}
-                  </span>
-                </div>
+            <div class="flex items-start justify-between gap-4">
+              <div class="min-w-0">
+                <Badge :variant="todo.is_completed ? 'secondary' : 'outline'" class="mb-2">
+                  {{ todo.is_completed ? 'Completed' : 'Active' }}
+                </Badge>
                 <h1
-                  class="tw:text-2xl tw:font-bold"
-                  :class="{ 'tw:line-through tw:opacity-60': todo.is_completed }"
+                  class="text-2xl font-bold tracking-tight"
+                  :class="{ 'text-muted-foreground line-through': todo.is_completed }"
                 >
                   {{ todo.title }}
                 </h1>
-                <p v-if="todo.description" class="tw:mt-3 tw:text-base-content/70">
+                <p v-if="todo.description" class="mt-3 text-muted-foreground">
                   {{ todo.description }}
                 </p>
               </div>
-              <div v-if="todo.user.id === authStore.user?.id" class="tw:flex tw:gap-2">
-                <button
-                  @click="toggleComplete"
-                  class="tw:btn tw:btn-sm tw:btn-outline"
-                  :class="todo.is_completed ? 'tw:btn-warning' : 'tw:btn-success'"
-                >
-                  <Icon
-                    :icon="todo.is_completed ? 'mdi:undo' : 'mdi:check'"
-                    class="tw:w-4 tw:h-4"
-                  />
+              <div v-if="todo.user.id === authStore.user?.id" class="flex shrink-0 gap-2">
+                <Button variant="outline" size="sm" @click="toggleComplete">
+                  <Undo2 v-if="todo.is_completed" />
+                  <Check v-else />
                   {{ todo.is_completed ? 'Reopen' : 'Complete' }}
-                </button>
-                <button @click="startEdit" class="tw:btn tw:btn-sm tw:btn-outline">
-                  <Icon icon="mdi:pencil" class="tw:w-4 tw:h-4" />
-                </button>
+                </Button>
+                <Button variant="outline" size="icon-sm" aria-label="Edit todo" @click="startEdit">
+                  <Pencil />
+                </Button>
               </div>
             </div>
           </template>
 
           <!-- Edit Mode -->
           <template v-else>
-            <form @submit.prevent="saveEdit" class="tw:space-y-4">
-              <input
+            <form class="space-y-4" @submit.prevent="saveEdit">
+              <Input
                 v-model="editTitle"
-                type="text"
-                class="tw:input tw:input-bordered tw:w-full tw:text-xl tw:font-bold"
+                class="text-lg font-semibold"
+                aria-label="Todo title"
+                required
               />
-              <textarea
-                v-model="editDescription"
-                class="tw:textarea tw:textarea-bordered tw:w-full"
-                rows="3"
-              ></textarea>
-              <div class="tw:flex tw:gap-2 tw:justify-end">
-                <button type="button" @click="editing = false" class="tw:btn tw:btn-sm">
+              <Textarea v-model="editDescription" rows="3" aria-label="Todo description" />
+              <div class="flex justify-end gap-2">
+                <Button type="button" variant="outline" size="sm" @click="editing = false">
                   Cancel
-                </button>
-                <button type="submit" class="tw:btn tw:btn-sm tw:btn-primary">Save</button>
+                </Button>
+                <Button type="submit" size="sm">Save</Button>
               </div>
             </form>
           </template>
 
           <!-- Meta -->
-          <div
-            class="tw:flex tw:items-center tw:gap-4 tw:mt-4 tw:pt-4 tw:border-t tw:border-base-200 tw:text-sm tw:text-base-content/50"
-          >
+          <Separator class="my-4" />
+          <div class="flex items-center gap-4 text-sm text-muted-foreground">
             <RouterLink
               :to="{ name: 'user-profile', params: { id: todo.user.id } }"
-              class="tw:flex tw:items-center tw:gap-1 hover:tw:text-primary"
+              class="hover:text-foreground"
             >
-              <Icon icon="mdi:account" class="tw:w-4 tw:h-4" />
               {{ todo.user.first_name }} {{ todo.user.last_name }} (@{{ todo.user.username }})
             </RouterLink>
             <span>{{ timeAgo(todo.createdAt) }}</span>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </template>
   </div>
 </template>

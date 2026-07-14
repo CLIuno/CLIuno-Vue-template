@@ -1,157 +1,113 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Heart, Moon, Rocket, Zap } from '@lucide/vue'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+const steps = [
+  {
+    title: 'Step 1: Choose Your Template',
+    text: 'Browse through our collection of ready-to-use templates.',
+  },
+  {
+    title: 'Step 2: Customize It',
+    text: 'Adjust the template to your needs with minimal effort.',
+  },
+  {
+    title: 'Step 3: Launch',
+    text: 'Deploy and launch your project in no time.',
+  },
+]
+
+const features = [
+  {
+    icon: Zap,
+    title: 'Open Source',
+    text: 'Use it for free and contribute to the project.',
+  },
+  {
+    icon: Heart,
+    title: 'Free',
+    text: 'Use even for commercial projects, no cost at all.',
+  },
+  {
+    icon: Moon,
+    title: 'Simplicity First',
+    text: 'No experience needed. Just plug and play.',
+  },
+  {
+    icon: Rocket,
+    title: 'Fast Launch',
+    text: 'Get projects off the ground with one command.',
+  },
+]
+</script>
 
 <template>
-  <div class="tw:min-h-screen tw:bg-base-100 tw:text-base-content">
+  <div class="flex min-h-screen flex-col bg-background text-foreground">
     <NavbarComp />
 
-    <!-- Hero Section -->
-    <section class="tw:hero tw:min-h-[80vh] tw:bg-base-200">
-      <div class="tw:hero-content tw:flex-col lg:tw:flex-row-reverse">
-        <img
-          src="https://placehold.co/600x400/"
-          class="tw:max-w-sm tw:rounded-2xl tw:shadow-2xl tw:transition-transform tw:duration-500 tw:ease-in-out tw:transform-gpu hover:tw:rotate-3 hover:tw:scale-105"
-          alt="Hero"
-        />
-        <div class="tw:animate-fade-in tw:space-y-4">
-          <h1 class="tw:text-5xl tw:font-bold tw:text-primary animate-bounce">
+    <main class="flex-1">
+      <!-- Hero Section -->
+      <section class="border-b">
+        <div class="container mx-auto flex flex-col items-center gap-6 px-4 py-24 text-center">
+          <Badge variant="outline">Open source full-stack templates</Badge>
+          <h1 class="max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
             Welcome to CLIuno Templates
           </h1>
-          <p class="tw:py-6 tw:text-lg tw:max-w-xl">
+          <p class="max-w-xl text-lg text-muted-foreground">
             The ultimate tool to make your journey in web development less painful.
           </p>
-          <button
-            class="tw:btn tw:btn-primary hover:tw:scale-105 tw:transition-transform tw:duration-300"
-          >
-            Get Started
-          </button>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <Button size="lg" as-child>
+              <RouterLink :to="{ name: 'register' }">Get Started</RouterLink>
+            </Button>
+            <Button size="lg" variant="outline" as-child>
+              <a href="https://github.com/CLIuno" target="_blank" rel="noopener">Docs</a>
+            </Button>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Reset Section -->
-    <section class="tw:py-20 tw:px-6">
-      <div class="tw:max-w-7xl tw:mx-auto">
-        <div class="tw:text-center tw:mb-16">
-          <h2 class="tw:text-4xl tw:font-bold tw:text-primary">Reset Your Development Journey</h2>
-          <p class="tw:text-lg tw:max-w-2xl tw:mx-auto">
-            Forget the confusion and complexity—use our templates to start your next project without
-            the hassle.
+      <!-- Steps Section -->
+      <section class="container mx-auto px-4 py-20">
+        <div class="mb-12 text-center">
+          <h2 class="text-3xl font-bold tracking-tight">Reset Your Development Journey</h2>
+          <p class="mx-auto mt-3 max-w-2xl text-muted-foreground">
+            Forget the confusion and complexity&mdash;use our templates to start your next project
+            without the hassle.
           </p>
         </div>
-        <div
-          class="tw:flex tw:flex-col lg:tw:flex-row tw:gap-8 tw:items-stretch tw:perspective-[1000px]"
-        >
-          <div
-            class="tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:transition-transform tw:duration-500 tw:transform-gpu hover:tw:rotate-y-6 hover:tw:scale-105"
-          >
-            <h3 class="tw:text-xl tw:font-semibold tw:text-accent">Step 1: Choose Your Template</h3>
-            <p class="tw:py-4">Browse through our collection of ready-to-use templates.</p>
-          </div>
-          <div
-            class="tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:transition-transform tw:duration-500 tw:transform-gpu hover:tw:rotate-y-[-6deg] hover:tw:scale-105"
-          >
-            <h3 class="tw:text-xl tw:font-semibold tw:text-accent">Step 2: Customize It</h3>
-            <p class="tw:py-4">Adjust the template to your needs with minimal effort.</p>
-          </div>
-          <div
-            class="tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:transition-transform tw:duration-500 tw:transform-gpu hover:tw:rotate-y-3 hover:tw:scale-105"
-          >
-            <h3 class="tw:text-xl tw:font-semibold tw:text-accent">Step 3: Launch</h3>
-            <p class="tw:py-4">Deploy and launch your project in no time.</p>
-          </div>
+        <div class="grid gap-6 lg:grid-cols-3">
+          <Card v-for="step in steps" :key="step.title">
+            <CardHeader>
+              <CardTitle>{{ step.title }}</CardTitle>
+            </CardHeader>
+            <CardContent class="text-muted-foreground">
+              {{ step.text }}
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Features Section -->
-    <section class="tw:py-16 tw:px-6">
-      <div
-        class="tw:flex md:tw:grid md:tw:grid-cols-3 tw:gap-6 tw:overflow-x-auto tw:scrollbar-hide tw:space-x-4 md:tw:space-x-0"
-      >
-        <div
-          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-2 tw:transform-gpu animate-pulse"
-        >
-          <img
-            src="https://placehold.co/400x200"
-            alt="Open Source"
-            class="tw:rounded-md tw:mb-4 tw:transition-transform tw:duration-300 hover:tw:scale-105"
-          />
-          <h2 class="tw:card-title tw:text-primary">⚡ Open Source</h2>
-          <p>Use it for free and contribute to the project.</p>
+      <!-- Features Section -->
+      <section class="container mx-auto px-4 pb-20">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <Card v-for="feature in features" :key="feature.title">
+            <CardContent>
+              <div
+                class="mb-4 flex size-10 items-center justify-center rounded-lg bg-muted text-foreground"
+              >
+                <component :is="feature.icon" class="size-5" />
+              </div>
+              <h3 class="font-semibold">{{ feature.title }}</h3>
+              <p class="mt-1 text-sm text-muted-foreground">{{ feature.text }}</p>
+            </CardContent>
+          </Card>
         </div>
-
-        <div
-          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-2 tw:transform-gpu animate-pulse"
-        >
-          <img
-            src="https://placehold.co/400x200"
-            alt="Free"
-            class="tw:rounded-md tw:mb-4 tw:transition-transform tw:duration-300 hover:tw:scale-105"
-          />
-          <h2 class="tw:card-title tw:text-secondary">🎨 Free</h2>
-          <p>Use even for commercial projects, no cost at all.</p>
-        </div>
-
-        <div
-          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:rotate-y-3 tw:transform-gpu animate-pulse"
-        >
-          <img
-            src="https://placehold.co/400x200"
-            alt="Simplicity"
-            class="tw:rounded-md tw:mb-4 tw:transition-transform tw:duration-300 hover:tw:scale-105"
-          />
-          <h2 class="tw:card-title tw:text-accent">🌙 Simplicity First</h2>
-          <p>No experience needed. Just plug and play.</p>
-        </div>
-
-        <!-- Add more if you want -->
-        <div
-          class="tw:min-w-70 md:tw:min-w-0 tw:card tw:bg-base-100 tw:p-6 tw:rounded-xl tw:shadow-md tw:transition-transform tw:duration-500 hover:tw:scale-105 hover:tw:-rotate-y-3 tw:transform-gpu animate-pulse"
-        >
-          <img
-            src="https://placehold.co/400x200"
-            alt="Fast Launch"
-            class="tw:rounded-md tw:mb-4 tw:transition-transform tw:duration-300 hover:tw:scale-105"
-          />
-          <h2 class="tw:card-title tw:text-info">🚀 Fast Launch</h2>
-          <p>Get projects off the ground with one command.</p>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <FooterComp />
   </div>
 </template>
-<style>
-@keyframes fade-in-left {
-  0% {
-    opacity: 0;
-    transform: translateX(-40px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fade-in-right {
-  0% {
-    opacity: 0;
-    transform: translateX(40px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-fade-in-left {
-  animation: fade-in-left 1s ease-out both;
-}
-
-.animate-fade-in-right {
-  animation: fade-in-right 1s ease-out both;
-}
-</style>

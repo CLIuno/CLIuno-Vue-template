@@ -1,5 +1,20 @@
 <script setup lang="ts">
+import { FileText, Loader2, MessageSquare, Plus, Trash2 } from '@lucide/vue'
 import api from '@/apis'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
@@ -79,144 +94,118 @@ onMounted(fetchPosts)
 </script>
 
 <template>
-  <div class="tw:max-w-4xl tw:mx-auto tw:px-4 tw:py-8">
+  <div class="mx-auto max-w-4xl px-4 py-8">
     <!-- Header -->
-    <div class="tw:flex tw:items-center tw:justify-between tw:mb-8">
+    <div class="mb-8 flex items-center justify-between gap-4">
       <div>
-        <h1 class="tw:text-3xl tw:font-bold tw:text-base-content">Posts</h1>
-        <p class="tw:text-base-content/60">Share and discuss with the community</p>
+        <h1 class="text-3xl font-bold tracking-tight">Posts</h1>
+        <p class="text-muted-foreground">Share and discuss with the community</p>
       </div>
-      <button @click="showCreateModal = true" class="tw:btn tw:btn-primary">
-        <Icon icon="mdi:plus" class="tw:w-5 tw:h-5" />
-        New Post
-      </button>
+
+      <!-- Create Dialog -->
+      <Dialog v-model:open="showCreateModal">
+        <DialogTrigger as-child>
+          <Button>
+            <Plus />
+            New Post
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Post</DialogTitle>
+            <DialogDescription>Share something with the community.</DialogDescription>
+          </DialogHeader>
+          <form class="space-y-4" @submit.prevent="createPost">
+            <div class="space-y-2">
+              <Label for="post-title">Title</Label>
+              <Input id="post-title" v-model="newTitle" placeholder="Post title" required />
+            </div>
+            <div class="space-y-2">
+              <Label for="post-content">Content</Label>
+              <Textarea
+                id="post-content"
+                v-model="newContent"
+                placeholder="Write your post..."
+                rows="5"
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" @click="showCreateModal = false">
+                Cancel
+              </Button>
+              <Button type="submit" :disabled="creating">
+                <Loader2 v-if="creating" class="animate-spin" />
+                {{ creating ? 'Creating...' : 'Create' }}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
 
     <!-- Filters -->
-    <div class="tw:tabs tw:tabs-boxed tw:mb-6 tw:w-fit">
-      <button class="tw:tab" :class="{ 'tw:tab-active': filter === 'all' }" @click="filter = 'all'">
+    <div class="mb-6 flex w-fit items-center gap-1 rounded-lg bg-muted p-1">
+      <Button size="sm" :variant="filter === 'all' ? 'outline' : 'ghost'" @click="filter = 'all'">
         All
-      </button>
-      <button
-        class="tw:tab"
-        :class="{ 'tw:tab-active': filter === 'mine' }"
-        @click="filter = 'mine'"
-      >
+      </Button>
+      <Button size="sm" :variant="filter === 'mine' ? 'outline' : 'ghost'" @click="filter = 'mine'">
         Mine
-      </button>
+      </Button>
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="tw:flex tw:justify-center tw:py-20">
-      <span class="tw:loading tw:loading-spinner tw:loading-lg tw:text-primary"></span>
+    <div v-if="loading" class="flex justify-center py-20">
+      <Loader2 class="size-8 animate-spin text-muted-foreground" />
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="filteredPosts.length === 0" class="tw:text-center tw:py-20">
-      <Icon icon="mdi:post-outline" class="tw:w-16 tw:h-16 tw:mx-auto tw:text-base-content/30" />
-      <h3 class="tw:text-xl tw:font-semibold tw:mt-4">No posts yet</h3>
-      <p class="tw:text-base-content/60 tw:mt-2">Create your first post to get started!</p>
+    <div v-else-if="filteredPosts.length === 0" class="py-20 text-center">
+      <FileText class="mx-auto size-16 text-muted-foreground/40" />
+      <h3 class="mt-4 text-xl font-semibold">No posts yet</h3>
+      <p class="mt-2 text-muted-foreground">Create your first post to get started!</p>
     </div>
 
     <!-- List -->
-    <div v-else class="tw:space-y-3">
-      <div
-        v-for="post in filteredPosts"
-        :key="post.id"
-        class="tw:card tw:bg-base-100 tw:shadow-sm hover:tw:shadow-md tw:transition-shadow"
-      >
-        <div class="tw:card-body tw:p-4">
-          <div class="tw:flex tw:items-start tw:gap-3">
-            <!-- Content -->
-            <div class="tw:flex-1 tw:min-w-0">
-              <RouterLink :to="{ name: 'post-detail', params: { id: post.id } }">
-                <h3 class="tw:font-semibold tw:text-lg hover:tw:text-primary tw:transition-colors">
-                  {{ post.title }}
-                </h3>
+    <div v-else class="space-y-3">
+      <Card v-for="post in filteredPosts" :key="post.id" class="transition-shadow hover:shadow-md">
+        <CardContent class="flex items-start gap-3">
+          <div class="min-w-0 flex-1">
+            <RouterLink :to="{ name: 'post-detail', params: { id: post.id } }">
+              <h3 class="text-base font-medium underline-offset-4 hover:underline">
+                {{ post.title }}
+              </h3>
+            </RouterLink>
+            <p v-if="post.content" class="mt-1 line-clamp-2 text-sm text-muted-foreground">
+              {{ post.content }}
+            </p>
+            <div class="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+              <RouterLink
+                :to="{ name: 'user-profile', params: { id: post.user.id } }"
+                class="hover:text-foreground"
+              >
+                @{{ post.user.username }}
               </RouterLink>
-              <p
-                v-if="post.content"
-                class="tw:text-base-content/60 tw:text-sm tw:mt-1 tw:line-clamp-2"
-              >
-                {{ post.content }}
-              </p>
-              <div
-                class="tw:flex tw:items-center tw:gap-4 tw:mt-2 tw:text-sm tw:text-base-content/50"
-              >
-                <RouterLink
-                  :to="{ name: 'user-profile', params: { id: post.user.id } }"
-                  class="tw:flex tw:items-center tw:gap-1 hover:tw:text-primary"
-                >
-                  <Icon icon="mdi:account" class="tw:w-4 tw:h-4" />
-                  {{ post.user.username }}
-                </RouterLink>
-                <span class="tw:flex tw:items-center tw:gap-1">
-                  <Icon icon="mdi:comment-outline" class="tw:w-4 tw:h-4" />
-                  {{ post.comments?.length || 0 }}
-                </span>
-                <span>{{ timeAgo(post.createdAt) }}</span>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div v-if="post.user.id === authStore.user?.id" class="tw:dropdown tw:dropdown-end">
-              <button class="tw:btn tw:btn-ghost tw:btn-sm tw:btn-circle">
-                <Icon icon="mdi:dots-vertical" class="tw:w-5 tw:h-5" />
-              </button>
-              <ul
-                class="tw:dropdown-content tw:menu tw:p-2 tw:shadow tw:bg-base-100 tw:rounded-box tw:w-40 tw:z-10"
-              >
-                <li>
-                  <RouterLink :to="{ name: 'post-detail', params: { id: post.id } }">
-                    <Icon icon="mdi:eye" class="tw:w-4 tw:h-4" /> View
-                  </RouterLink>
-                </li>
-                <li>
-                  <button @click="deletePost(post.id)" class="tw:text-error">
-                    <Icon icon="mdi:delete" class="tw:w-4 tw:h-4" /> Delete
-                  </button>
-                </li>
-              </ul>
+              <span class="flex items-center gap-1">
+                <MessageSquare class="size-3.5" />
+                {{ post.comments?.length || 0 }}
+              </span>
+              <span>{{ timeAgo(post.createdAt) }}</span>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Create Modal -->
-    <div v-if="showCreateModal" class="tw:modal tw:modal-open">
-      <div class="tw:modal-box">
-        <h3 class="tw:font-bold tw:text-lg tw:mb-4">Create New Post</h3>
-        <form @submit.prevent="createPost" class="tw:space-y-4">
-          <div class="tw:form-control">
-            <div class="tw:label"><span class="tw:label-text">Title</span></div>
-            <input
-              v-model="newTitle"
-              type="text"
-              placeholder="Post title"
-              class="tw:input tw:input-bordered tw:w-full"
-              required
-            />
-          </div>
-          <div class="tw:form-control">
-            <div class="tw:label"><span class="tw:label-text">Content</span></div>
-            <textarea
-              v-model="newContent"
-              placeholder="Write your post..."
-              class="tw:textarea tw:textarea-bordered tw:w-full"
-              rows="5"
-              required
-            ></textarea>
-          </div>
-          <div class="tw:modal-action">
-            <button type="button" @click="showCreateModal = false" class="tw:btn">Cancel</button>
-            <button type="submit" class="tw:btn tw:btn-primary" :disabled="creating">
-              {{ creating ? 'Creating...' : 'Create' }}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="tw:modal-backdrop" @click="showCreateModal = false"></div>
+          <Button
+            v-if="post.user.id === authStore.user?.id"
+            variant="ghost"
+            size="icon"
+            class="text-muted-foreground hover:text-destructive"
+            aria-label="Delete post"
+            @click="deletePost(post.id)"
+          >
+            <Trash2 />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>

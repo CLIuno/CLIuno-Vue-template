@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { Loader2, UserCheck, UserPlus, Users } from '@lucide/vue'
 import api from '@/apis'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
@@ -55,63 +59,55 @@ onMounted(fetchUsers)
 </script>
 
 <template>
-  <div class="tw:max-w-4xl tw:mx-auto tw:px-4 tw:py-8">
-    <div class="tw:mb-8">
-      <h1 class="tw:text-3xl tw:font-bold tw:text-base-content">Users</h1>
-      <p class="tw:text-base-content/60">Discover and follow other users</p>
+  <div class="mx-auto max-w-4xl px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold tracking-tight">Users</h1>
+      <p class="text-muted-foreground">Discover and follow other users</p>
     </div>
 
-    <div v-if="loading" class="tw:flex tw:justify-center tw:py-20">
-      <span class="tw:loading tw:loading-spinner tw:loading-lg tw:text-primary"></span>
+    <!-- Loading -->
+    <div v-if="loading" class="flex justify-center py-20">
+      <Loader2 class="size-8 animate-spin text-muted-foreground" />
     </div>
 
-    <div v-else-if="users.length === 0" class="tw:text-center tw:py-20">
-      <Icon
-        icon="mdi:account-group-outline"
-        class="tw:w-16 tw:h-16 tw:mx-auto tw:text-base-content/30"
-      />
-      <h3 class="tw:text-xl tw:font-semibold tw:mt-4">No other users yet</h3>
+    <!-- Empty State -->
+    <div v-else-if="users.length === 0" class="py-20 text-center">
+      <Users class="mx-auto size-16 text-muted-foreground/40" />
+      <h3 class="mt-4 text-xl font-semibold">No other users yet</h3>
     </div>
 
-    <div v-else class="tw:grid tw:grid-cols-1 md:tw:grid-cols-2 tw:gap-4">
-      <div
-        v-for="user in users"
-        :key="user.id"
-        class="tw:card tw:bg-base-100 tw:shadow-sm hover:tw:shadow-md tw:transition-shadow"
-      >
-        <div class="tw:card-body tw:p-4 tw:flex tw:flex-row tw:items-center tw:gap-4">
-          <!-- Avatar -->
-          <div class="tw:avatar tw:placeholder">
-            <div class="tw:bg-primary tw:text-primary-content tw:w-12 tw:h-12 tw:rounded-full">
-              <span class="tw:text-lg">{{ user.first_name[0] }}{{ user.last_name[0] }}</span>
-            </div>
-          </div>
+    <!-- List -->
+    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <Card v-for="user in users" :key="user.id" class="transition-shadow hover:shadow-md">
+        <CardContent class="flex items-center gap-4">
+          <Avatar class="size-10">
+            <AvatarFallback>{{ user.first_name[0] }}{{ user.last_name[0] }}</AvatarFallback>
+          </Avatar>
 
-          <!-- Info -->
-          <div class="tw:flex-1">
+          <div class="min-w-0 flex-1">
             <RouterLink
               :to="{ name: 'user-profile', params: { id: user.id } }"
-              class="tw:font-semibold hover:tw:text-primary tw:transition-colors"
+              class="block truncate font-medium underline-offset-4 hover:underline"
             >
               {{ user.first_name }} {{ user.last_name }}
             </RouterLink>
-            <p class="tw:text-sm tw:text-base-content/50">@{{ user.username }}</p>
+            <p class="truncate text-sm text-muted-foreground">
+              @{{ user.username }}<template v-if="user.email"> &middot; {{ user.email }}</template>
+            </p>
           </div>
 
-          <!-- Follow Button -->
-          <button
+          <Button
+            size="sm"
+            :variant="followingMap[user.id] ? 'outline' : 'default'"
+            class="shrink-0"
             @click="toggleFollow(user.id)"
-            class="tw:btn tw:btn-sm"
-            :class="followingMap[user.id] ? 'tw:btn-outline' : 'tw:btn-primary'"
           >
-            <Icon
-              :icon="followingMap[user.id] ? 'mdi:account-check' : 'mdi:account-plus'"
-              class="tw:w-4 tw:h-4"
-            />
+            <UserCheck v-if="followingMap[user.id]" />
+            <UserPlus v-else />
             {{ followingMap[user.id] ? 'Following' : 'Follow' }}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>

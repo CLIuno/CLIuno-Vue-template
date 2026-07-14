@@ -1,5 +1,18 @@
 <script setup lang="ts">
+import { CircleAlert, CircleCheck, Loader2, Rocket } from '@lucide/vue'
 import api from '@/apis'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const email = ref('')
 const loading = ref(false)
@@ -21,56 +34,55 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="tw:min-h-screen tw:flex tw:items-center tw:justify-center tw:bg-base-200 tw:px-4">
-    <div class="tw:card tw:w-full tw:max-w-md tw:bg-base-100 tw:shadow-xl">
-      <div class="tw:card-body tw:p-8">
-        <div class="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:mb-2">
-          <Icon icon="mdi:rocket-launch-outline" class="tw:w-8 tw:h-8 tw:text-primary" />
-          <span class="tw:text-2xl tw:font-bold tw:text-primary">CLIuno</span>
-        </div>
+  <div class="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+    <Card class="w-full max-w-sm">
+      <CardHeader class="text-center">
+        <RouterLink to="/" class="mx-auto mb-2 flex items-center gap-2 font-semibold">
+          <Rocket class="size-6" />
+          <span class="text-xl">CLIuno</span>
+        </RouterLink>
+        <CardTitle>Forgot Password</CardTitle>
+        <CardDescription>Enter your email to receive a reset link</CardDescription>
+      </CardHeader>
 
-        <h2 class="tw:text-2xl tw:font-bold tw:text-center tw:mb-1">Forgot Password</h2>
-        <p class="tw:text-center tw:text-base-content/60 tw:mb-6">
-          Enter your email to receive a reset link
-        </p>
+      <CardContent>
+        <Alert v-if="success" class="mb-4">
+          <CircleCheck />
+          <AlertDescription>Reset link sent! Check your email.</AlertDescription>
+        </Alert>
 
-        <div v-if="success" class="tw:alert tw:alert-success tw:mb-4">
-          <Icon icon="mdi:check-circle" class="tw:w-5 tw:h-5" />
-          <span>Reset link sent! Check your email.</span>
-        </div>
+        <Alert v-if="error" variant="destructive" class="mb-4">
+          <CircleAlert />
+          <AlertDescription>{{ error }}</AlertDescription>
+        </Alert>
 
-        <div v-if="error" class="tw:alert tw:alert-error tw:mb-4">
-          <Icon icon="mdi:alert-circle" class="tw:w-5 tw:h-5" />
-          <span>{{ error }}</span>
-        </div>
+        <form v-if="!success" class="space-y-4" @submit.prevent="handleSubmit">
+          <div class="space-y-2">
+            <Label for="forgot-email">Email Address</Label>
+            <Input
+              id="forgot-email"
+              v-model="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
 
-        <form v-if="!success" @submit.prevent="handleSubmit" class="tw:space-y-4">
-          <fieldset class="tw:fieldset">
-            <legend class="tw:fieldset-legend">Email Address</legend>
-            <div class="tw:input tw:w-full">
-              <Icon icon="mdi:email-outline" class="tw:h-[1em] tw:opacity-50" />
-              <input
-                id="forgot-email"
-                v-model="email"
-                type="email"
-                placeholder="Enter your email"
-                class="tw:grow"
-                required
-              />
-            </div>
-          </fieldset>
-
-          <button type="submit" class="tw:btn tw:btn-primary tw:w-full" :disabled="loading">
+          <Button type="submit" class="w-full" :disabled="loading">
+            <Loader2 v-if="loading" class="animate-spin" />
             {{ loading ? 'Sending...' : 'Send Reset Link' }}
-          </button>
+          </Button>
         </form>
+      </CardContent>
 
-        <div class="tw:text-center tw:mt-4">
-          <RouterLink :to="{ name: 'login' }" class="tw:link tw:link-primary">
-            Back to Sign In
-          </RouterLink>
-        </div>
-      </div>
-    </div>
+      <CardFooter class="justify-center">
+        <RouterLink
+          :to="{ name: 'login' }"
+          class="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Back to Sign In
+        </RouterLink>
+      </CardFooter>
+    </Card>
   </div>
 </template>

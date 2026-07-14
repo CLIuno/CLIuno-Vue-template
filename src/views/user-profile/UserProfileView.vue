@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { Loader2, UserCheck, UserPlus } from '@lucide/vue'
 import api from '@/apis'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
@@ -71,111 +76,100 @@ onMounted(loadProfile)
 </script>
 
 <template>
-  <div class="tw:max-w-3xl tw:mx-auto tw:px-4 tw:py-8">
-    <div v-if="loading" class="tw:flex tw:justify-center tw:py-20">
-      <span class="tw:loading tw:loading-spinner tw:loading-lg tw:text-primary"></span>
+  <div class="mx-auto max-w-3xl px-4 py-8">
+    <!-- Loading -->
+    <div v-if="loading" class="flex justify-center py-20">
+      <Loader2 class="size-8 animate-spin text-muted-foreground" />
     </div>
 
     <template v-else-if="user">
       <!-- Profile Card -->
-      <div class="tw:card tw:bg-base-100 tw:shadow-lg tw:mb-6">
-        <!-- Cover -->
-        <div
-          class="tw:bg-linear-to-r tw:from-primary tw:to-secondary tw:h-32 tw:rounded-t-2xl"
-        ></div>
+      <Card class="mb-6">
+        <CardContent>
+          <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            <Avatar class="size-20">
+              <AvatarFallback class="text-2xl">
+                {{ user.first_name[0] }}{{ user.last_name[0] }}
+              </AvatarFallback>
+            </Avatar>
 
-        <div class="tw:card-body tw:pt-0">
-          <div
-            class="tw:flex tw:flex-col sm:tw:flex-row tw:items-center sm:tw:items-end tw:gap-4 tw:-mt-12"
-          >
-            <!-- Avatar -->
-            <div class="tw:avatar tw:placeholder">
-              <div
-                class="tw:bg-neutral tw:text-neutral-content tw:w-24 tw:h-24 tw:rounded-full tw:ring-4 tw:ring-base-100"
-              >
-                <span class="tw:text-3xl">{{ user.first_name[0] }}{{ user.last_name[0] }}</span>
-              </div>
+            <div class="min-w-0 flex-1 text-center sm:text-left">
+              <h1 class="text-2xl font-bold tracking-tight">
+                {{ user.first_name }} {{ user.last_name }}
+              </h1>
+              <p class="text-muted-foreground">@{{ user.username }}</p>
+              <p v-if="user.email" class="truncate text-sm text-muted-foreground">
+                {{ user.email }}
+              </p>
             </div>
 
-            <div class="tw:flex-1 tw:text-center sm:tw:text-left">
-              <h1 class="tw:text-2xl tw:font-bold">{{ user.first_name }} {{ user.last_name }}</h1>
-              <p class="tw:text-base-content/60">@{{ user.username }}</p>
-            </div>
-
-            <!-- Follow Button -->
-            <button
+            <Button
               v-if="!isOwnProfile"
+              :variant="isFollowing ? 'outline' : 'default'"
+              class="shrink-0"
               @click="toggleFollow"
-              class="tw:btn"
-              :class="isFollowing ? 'tw:btn-outline' : 'tw:btn-primary'"
             >
-              <Icon
-                :icon="isFollowing ? 'mdi:account-check' : 'mdi:account-plus'"
-                class="tw:w-5 tw:h-5"
-              />
+              <UserCheck v-if="isFollowing" />
+              <UserPlus v-else />
               {{ isFollowing ? 'Following' : 'Follow' }}
-            </button>
+            </Button>
           </div>
+
+          <Separator class="my-4" />
 
           <!-- Stats -->
-          <div class="tw:flex tw:justify-center sm:tw:justify-start tw:gap-8 tw:mt-6">
-            <div class="tw:text-center">
-              <span class="tw:text-xl tw:font-bold">{{ followers.length }}</span>
-              <p class="tw:text-sm tw:text-base-content/60">Followers</p>
+          <div class="flex justify-center gap-8 sm:justify-start">
+            <div class="text-center">
+              <span class="text-xl font-bold">{{ followers.length }}</span>
+              <p class="text-sm text-muted-foreground">Followers</p>
             </div>
-            <div class="tw:text-center">
-              <span class="tw:text-xl tw:font-bold">{{ following.length }}</span>
-              <p class="tw:text-sm tw:text-base-content/60">Following</p>
+            <div class="text-center">
+              <span class="text-xl font-bold">{{ following.length }}</span>
+              <p class="text-sm text-muted-foreground">Following</p>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <!-- Followers -->
-      <div v-if="followers.length" class="tw:card tw:bg-base-100 tw:shadow-lg tw:mb-6">
-        <div class="tw:card-body">
-          <h2 class="tw:text-lg tw:font-bold tw:mb-3">Followers</h2>
-          <div class="tw:flex tw:flex-wrap tw:gap-3">
+      <Card v-if="followers.length" class="mb-6">
+        <CardContent>
+          <h2 class="mb-3 text-lg font-semibold">Followers</h2>
+          <div class="flex flex-wrap gap-2">
             <RouterLink
               v-for="f in followers"
               :key="f.id"
               :to="{ name: 'user-profile', params: { id: f.id } }"
-              class="tw:flex tw:items-center tw:gap-2 tw:bg-base-200 tw:rounded-full tw:px-3 tw:py-1 hover:tw:bg-base-300 tw:transition-colors"
+              class="flex items-center gap-2 rounded-full bg-muted py-1 pr-3 pl-1 text-sm transition-colors hover:bg-accent"
             >
-              <div class="tw:avatar tw:placeholder">
-                <div class="tw:bg-primary tw:text-primary-content tw:w-6 tw:h-6 tw:rounded-full">
-                  <span class="tw:text-xs">{{ f.first_name[0] }}</span>
-                </div>
-              </div>
-              <span class="tw:text-sm">{{ f.username }}</span>
+              <Avatar class="size-6">
+                <AvatarFallback class="text-xs">{{ f.first_name[0] }}</AvatarFallback>
+              </Avatar>
+              <span>{{ f.username }}</span>
             </RouterLink>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <!-- Following -->
-      <div v-if="following.length" class="tw:card tw:bg-base-100 tw:shadow-lg">
-        <div class="tw:card-body">
-          <h2 class="tw:text-lg tw:font-bold tw:mb-3">Following</h2>
-          <div class="tw:flex tw:flex-wrap tw:gap-3">
+      <Card v-if="following.length">
+        <CardContent>
+          <h2 class="mb-3 text-lg font-semibold">Following</h2>
+          <div class="flex flex-wrap gap-2">
             <RouterLink
               v-for="f in following"
               :key="f.id"
               :to="{ name: 'user-profile', params: { id: f.id } }"
-              class="tw:flex tw:items-center tw:gap-2 tw:bg-base-200 tw:rounded-full tw:px-3 tw:py-1 hover:tw:bg-base-300 tw:transition-colors"
+              class="flex items-center gap-2 rounded-full bg-muted py-1 pr-3 pl-1 text-sm transition-colors hover:bg-accent"
             >
-              <div class="tw:avatar tw:placeholder">
-                <div
-                  class="tw:bg-secondary tw:text-secondary-content tw:w-6 tw:h-6 tw:rounded-full"
-                >
-                  <span class="tw:text-xs">{{ f.first_name[0] }}</span>
-                </div>
-              </div>
-              <span class="tw:text-sm">{{ f.username }}</span>
+              <Avatar class="size-6">
+                <AvatarFallback class="text-xs">{{ f.first_name[0] }}</AvatarFallback>
+              </Avatar>
+              <span>{{ f.username }}</span>
             </RouterLink>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </template>
   </div>
 </template>

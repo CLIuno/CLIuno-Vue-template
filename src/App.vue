@@ -11,5 +11,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <RouterView />
+  <div class="min-h-screen bg-background text-foreground">
+    <RouterView />
+  </div>
 </template>

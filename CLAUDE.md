@@ -40,4 +40,7 @@ the single place URLs live.
 - oxc tooling: `oxlint` + `oxfmt` (`semi: false`, single quotes); prettier only for
   css/md/html; no eslint.
 - Conventional commits (commitlint + husky pre-commit runs type-check, lint, lint-staged).
-- Tailwind v4 + daisyUI, classes prefixed `tw:`.
+- Tailwind v4 (no prefix) + shadcn-vue (reka-ui primitives) in `src/components/ui/`;
+  `cn` util in `src/lib/utils.ts`; icons from `@lucide/vue`. Add components with
+  `npx shadcn-vue@latest add <name>`. Dark mode = `.dark` class on `<html>` +
+  `localStorage('theme')` (see `ThemeToggle.vue`).

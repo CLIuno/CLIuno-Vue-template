@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { ArrowLeft, Loader2, MessageSquare, Pencil, Send, Trash2 } from '@lucide/vue'
 import api from '@/apis'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
@@ -123,169 +130,161 @@ onMounted(fetchPost)
 </script>
 
 <template>
-  <div class="tw:max-w-3xl tw:mx-auto tw:px-4 tw:py-8">
+  <div class="mx-auto max-w-3xl px-4 py-8">
     <!-- Back -->
-    <RouterLink :to="{ name: 'posts' }" class="tw:btn tw:btn-ghost tw:btn-sm tw:mb-6">
-      <Icon icon="mdi:arrow-left" class="tw:w-5 tw:h-5" />
-      Back to Posts
-    </RouterLink>
+    <Button variant="ghost" size="sm" class="mb-6" as-child>
+      <RouterLink :to="{ name: 'posts' }">
+        <ArrowLeft />
+        Back to Posts
+      </RouterLink>
+    </Button>
 
     <!-- Loading -->
-    <div v-if="loading" class="tw:flex tw:justify-center tw:py-20">
-      <span class="tw:loading tw:loading-spinner tw:loading-lg tw:text-primary"></span>
+    <div v-if="loading" class="flex justify-center py-20">
+      <Loader2 class="size-8 animate-spin text-muted-foreground" />
     </div>
 
     <template v-else-if="post">
-      <!-- Detail Card -->
-      <div class="tw:card tw:bg-base-100 tw:shadow-lg tw:mb-6">
-        <div class="tw:card-body">
-          <template v-if="!editing">
-            <div class="tw:flex tw:items-start tw:justify-between">
-              <div>
-                <h1 class="tw:text-2xl tw:font-bold">
-                  {{ post.title }}
-                </h1>
-                <p v-if="post.content" class="tw:mt-3 tw:text-base-content/70">
-                  {{ post.content }}
-                </p>
-              </div>
-              <div v-if="post.user.id === authStore.user?.id" class="tw:flex tw:gap-2">
-                <button @click="startEdit" class="tw:btn tw:btn-sm tw:btn-outline">
-                  <Icon icon="mdi:pencil" class="tw:w-4 tw:h-4" />
-                </button>
-              </div>
+      <Card>
+        <CardContent>
+          <!-- Article -->
+          <article v-if="!editing">
+            <div class="flex items-start justify-between gap-4">
+              <h1 class="text-2xl font-bold tracking-tight">{{ post.title }}</h1>
+              <Button
+                v-if="post.user.id === authStore.user?.id"
+                variant="outline"
+                size="icon-sm"
+                class="shrink-0"
+                aria-label="Edit post"
+                @click="startEdit"
+              >
+                <Pencil />
+              </Button>
             </div>
-          </template>
+            <p v-if="post.content" class="mt-3 whitespace-pre-line text-muted-foreground">
+              {{ post.content }}
+            </p>
+            <div class="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+              <RouterLink
+                :to="{ name: 'user-profile', params: { id: post.user.id } }"
+                class="hover:text-foreground"
+              >
+                {{ post.user.first_name }} {{ post.user.last_name }} (@{{ post.user.username }})
+              </RouterLink>
+              <span>{{ timeAgo(post.createdAt) }}</span>
+            </div>
+          </article>
 
           <!-- Edit Mode -->
-          <template v-else>
-            <form @submit.prevent="saveEdit" class="tw:space-y-4">
-              <input
-                v-model="editTitle"
-                type="text"
-                class="tw:input tw:input-bordered tw:w-full tw:text-xl tw:font-bold"
-              />
-              <textarea
-                v-model="editContent"
-                class="tw:textarea tw:textarea-bordered tw:w-full"
-                rows="5"
-              ></textarea>
-              <div class="tw:flex tw:gap-2 tw:justify-end">
-                <button type="button" @click="editing = false" class="tw:btn tw:btn-sm">
-                  Cancel
-                </button>
-                <button type="submit" class="tw:btn tw:btn-sm tw:btn-primary">Save</button>
-              </div>
-            </form>
-          </template>
+          <form v-else class="space-y-4" @submit.prevent="saveEdit">
+            <Input
+              v-model="editTitle"
+              class="text-lg font-semibold"
+              aria-label="Post title"
+              required
+            />
+            <Textarea v-model="editContent" rows="5" aria-label="Post content" />
+            <div class="flex justify-end gap-2">
+              <Button type="button" variant="outline" size="sm" @click="editing = false">
+                Cancel
+              </Button>
+              <Button type="submit" size="sm">Save</Button>
+            </div>
+          </form>
 
-          <!-- Meta -->
-          <div
-            class="tw:flex tw:items-center tw:gap-4 tw:mt-4 tw:pt-4 tw:border-t tw:border-base-200 tw:text-sm tw:text-base-content/50"
-          >
-            <RouterLink
-              :to="{ name: 'user-profile', params: { id: post.user.id } }"
-              class="tw:flex tw:items-center tw:gap-1 hover:tw:text-primary"
-            >
-              <Icon icon="mdi:account" class="tw:w-4 tw:h-4" />
-              {{ post.user.first_name }} {{ post.user.last_name }} (@{{ post.user.username }})
-            </RouterLink>
-            <span>{{ timeAgo(post.createdAt) }}</span>
-          </div>
-        </div>
-      </div>
+          <Separator class="my-6" />
 
-      <!-- Comments Section -->
-      <div class="tw:card tw:bg-base-100 tw:shadow-lg">
-        <div class="tw:card-body">
-          <h2 class="tw:text-xl tw:font-bold tw:mb-4">
-            <Icon icon="mdi:comment-multiple-outline" class="tw:w-6 tw:h-6 tw:inline tw:mr-1" />
+          <!-- Comments -->
+          <h2 class="flex items-center gap-2 text-lg font-semibold">
+            <MessageSquare class="size-5" />
             Comments ({{ post.comments?.length || 0 }})
           </h2>
 
           <!-- Add Comment -->
-          <form @submit.prevent="addComment" class="tw:mb-6">
-            <div class="tw:flex tw:gap-2">
-              <input
-                v-model="newComment"
-                type="text"
-                placeholder="Write a comment..."
-                class="tw:input tw:input-bordered tw:flex-1"
-                required
-              />
-              <button type="submit" class="tw:btn tw:btn-primary" :disabled="submittingComment">
-                <Icon icon="mdi:send" class="tw:w-5 tw:h-5" />
-              </button>
-            </div>
+          <form class="mt-4 flex gap-2" @submit.prevent="addComment">
+            <Input
+              v-model="newComment"
+              placeholder="Write a comment..."
+              aria-label="New comment"
+              required
+            />
+            <Button
+              type="submit"
+              size="icon"
+              class="shrink-0"
+              :disabled="submittingComment"
+              aria-label="Send comment"
+            >
+              <Loader2 v-if="submittingComment" class="animate-spin" />
+              <Send v-else />
+            </Button>
           </form>
 
           <!-- Comments List -->
-          <div v-if="!post.comments?.length" class="tw:text-center tw:py-8 tw:text-base-content/40">
-            <Icon icon="mdi:comment-off-outline" class="tw:w-10 tw:h-10 tw:mx-auto tw:mb-2" />
+          <div v-if="!post.comments?.length" class="py-8 text-center text-muted-foreground">
             <p>No comments yet. Be the first!</p>
           </div>
 
-          <div v-else class="tw:space-y-4">
-            <div v-for="comment in post.comments" :key="comment.id" class="tw:flex tw:gap-3">
-              <div class="tw:avatar tw:placeholder">
-                <div class="tw:bg-neutral tw:text-neutral-content tw:w-8 tw:h-8 tw:rounded-full">
-                  <span class="tw:text-xs"
-                    >{{ comment.user.first_name[0] }}{{ comment.user.last_name[0] }}</span
-                  >
-                </div>
-              </div>
-              <div class="tw:flex-1 tw:bg-base-200 tw:rounded-lg tw:p-3">
-                <div class="tw:flex tw:items-center tw:justify-between tw:mb-1">
+          <div v-else class="mt-6 space-y-4">
+            <div v-for="comment in post.comments" :key="comment.id" class="flex gap-3">
+              <Avatar>
+                <AvatarFallback class="text-xs">
+                  {{ comment.user.first_name[0] }}{{ comment.user.last_name[0] }}
+                </AvatarFallback>
+              </Avatar>
+
+              <div class="min-w-0 flex-1 rounded-lg bg-muted p-3">
+                <div class="mb-1 flex items-center justify-between gap-2">
                   <RouterLink
                     :to="{ name: 'user-profile', params: { id: comment.user.id } }"
-                    class="tw:font-semibold tw:text-sm hover:tw:text-primary"
+                    class="text-sm font-medium underline-offset-4 hover:underline"
                   >
-                    {{ comment.user.username }}
+                    @{{ comment.user.username }}
                   </RouterLink>
-                  <div class="tw:flex tw:items-center tw:gap-2">
-                    <span class="tw:text-xs tw:text-base-content/50">{{
-                      timeAgo(comment.createdAt)
-                    }}</span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-xs text-muted-foreground">
+                      {{ timeAgo(comment.createdAt) }}
+                    </span>
                     <template v-if="comment.user.id === authStore.user?.id">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label="Edit comment"
                         @click="startEditComment(comment)"
-                        class="tw:btn tw:btn-ghost tw:btn-xs"
                       >
-                        <Icon icon="mdi:pencil" class="tw:w-3 tw:h-3" />
-                      </button>
-                      <button
+                        <Pencil />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        class="text-muted-foreground hover:text-destructive"
+                        aria-label="Delete comment"
                         @click="deleteComment(comment.id)"
-                        class="tw:btn tw:btn-ghost tw:btn-xs tw:text-error"
                       >
-                        <Icon icon="mdi:delete" class="tw:w-3 tw:h-3" />
-                      </button>
+                        <Trash2 />
+                      </Button>
                     </template>
                   </div>
                 </div>
 
-                <template v-if="editingCommentId === comment.id">
-                  <div class="tw:flex tw:gap-2">
-                    <input
-                      v-model="editCommentContent"
-                      class="tw:input tw:input-sm tw:input-bordered tw:flex-1"
-                    />
-                    <button
-                      @click="saveEditComment(comment.id)"
-                      class="tw:btn tw:btn-sm tw:btn-primary"
-                    >
-                      Save
-                    </button>
-                    <button @click="editingCommentId = null" class="tw:btn tw:btn-sm">
-                      Cancel
-                    </button>
-                  </div>
-                </template>
-                <p v-else class="tw:text-sm">{{ comment.content }}</p>
+                <div v-if="editingCommentId === comment.id" class="flex gap-2">
+                  <Input
+                    v-model="editCommentContent"
+                    class="bg-background"
+                    aria-label="Edit comment content"
+                  />
+                  <Button size="sm" @click="saveEditComment(comment.id)">Save</Button>
+                  <Button size="sm" variant="outline" @click="editingCommentId = null">
+                    Cancel
+                  </Button>
+                </div>
+                <p v-else class="text-sm">{{ comment.content }}</p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </template>
   </div>
 </template>
