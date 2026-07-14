@@ -3,7 +3,9 @@ name: version-and-release-ci
 on:
   push:
     branches:
-      - master
+      # Releases are cut from the `release` branch (see .releaserc "branches").
+      # Triggering on master made semantic-release error on every normal push.
+      - release
 
 jobs:
   release:
