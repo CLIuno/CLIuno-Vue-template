@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LogOut, Rocket, User } from '@lucide/vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -54,6 +54,11 @@ const initials = computed(() => {
           <DropdownMenuTrigger as-child>
             <Button variant="ghost" size="icon" class="rounded-full" aria-label="User menu">
               <Avatar>
+                <AvatarImage
+                  v-if="authStore.user?.avatar_url"
+                  :src="authStore.user.avatar_url"
+                  :alt="initials"
+                />
                 <AvatarFallback>{{ initials }}</AvatarFallback>
               </Avatar>
             </Button>

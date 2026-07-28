@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeft, Loader2, MessageSquare, Pencil, Send, Trash2 } from '@lucide/vue'
 import api from '@/apis'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,17 +17,29 @@ interface Comment {
   id: string
   content: string
   createdAt: string
-  user: { id: string; username: string; first_name: string; last_name: string }
+  user: {
+    id: string
+    username: string
+    first_name: string
+    last_name: string
+    avatar_url?: string | null
+  }
 }
 
 interface Post {
   id: string
   title: string
   content: string
-  imageUrl: string
+  image_url?: string | null
   is_paid: boolean
   createdAt: string
-  user: { id: string; username: string; first_name: string; last_name: string }
+  user: {
+    id: string
+    username: string
+    first_name: string
+    last_name: string
+    avatar_url?: string | null
+  }
   comments: Comment[]
 }
 
@@ -165,6 +177,12 @@ onMounted(fetchPost)
             <p v-if="post.content" class="mt-3 whitespace-pre-line text-muted-foreground">
               {{ post.content }}
             </p>
+            <img
+              v-if="post.image_url"
+              :src="post.image_url"
+              :alt="post.title"
+              class="mt-3 max-h-96 w-full rounded-md border object-cover"
+            />
             <div class="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
               <RouterLink
                 :to="{ name: 'user-profile', params: { id: post.user.id } }"
@@ -229,6 +247,11 @@ onMounted(fetchPost)
           <div v-else class="mt-6 space-y-4">
             <div v-for="comment in post.comments" :key="comment.id" class="flex gap-3">
               <Avatar>
+                <AvatarImage
+                  v-if="comment.user.avatar_url"
+                  :src="comment.user.avatar_url"
+                  :alt="comment.user.username"
+                />
                 <AvatarFallback class="text-xs">
                   {{ comment.user.first_name[0] }}{{ comment.user.last_name[0] }}
                 </AvatarFallback>

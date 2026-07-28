@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FileText, Loader2, MessageSquare, Plus, Trash2 } from '@lucide/vue'
 import api from '@/apis'
+import { useImageUpload } from '@/composables/useImageUpload'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -23,12 +24,16 @@ interface Post {
   id: string
   title: string
   content: string
-  imageUrl: string
+  image_url: string | null
   is_paid: boolean
   createdAt: string
   user: { id: string; username: string; first_name: string; last_name: string }
   comments: Record<string, unknown>[]
 }
+
+const { uploading, uploadError, uploadImage } = useImageUpload()
+const newImageUrl = ref('')
+const postImageInput = ref<HTMLInputElement | null>(null)
 
 const posts = ref<Post[]>([])
 const loading = ref(true)
@@ -55,13 +60,27 @@ async function fetchPosts() {
   }
 }
 
+async function onPostImagePicked(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  const url = await uploadImage(file)
+  if (url) newImageUrl.value = url
+  input.value = ''
+}
+
 async function createPost() {
   if (!newTitle.value.trim() || !newContent.value.trim()) return
   creating.value = true
   try {
-    await api.post.createPost({ title: newTitle.value, content: newContent.value })
+    await api.post.createPost({
+      title: newTitle.value,
+      content: newContent.value,
+      ...(newImageUrl.value ? { image_url: newImageUrl.value } : {}),
+    })
     newTitle.value = ''
     newContent.value = ''
+    newImageUrl.value = ''
     showCreateModal.value = false
     await fetchPosts()
   } catch {
@@ -130,6 +149,43 @@ onMounted(fetchPosts)
                 required
               />
             </div>
+            <div class="space-y-2">
+              <Label>Image</Label>
+              <div class="flex items-center gap-3">
+                <input
+                  ref="postImageInput"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  class="hidden"
+                  @change="onPostImagePicked"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  :disabled="uploading"
+                  @click="postImageInput?.click()"
+                >
+                  {{ uploading ? 'Uploading…' : newImageUrl ? 'Replace image' : 'Add image' }}
+                </Button>
+                <Button
+                  v-if="newImageUrl"
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  @click="newImageUrl = ''"
+                >
+                  Remove
+                </Button>
+              </div>
+              <img
+                v-if="newImageUrl"
+                :src="newImageUrl"
+                alt="Selected image preview"
+                class="max-h-40 rounded-md border object-cover"
+              />
+              <p v-if="uploadError" class="text-sm text-destructive">{{ uploadError }}</p>
+            </div>
             <DialogFooter>
               <Button type="button" variant="outline" @click="showCreateModal = false">
                 Cancel
@@ -179,6 +235,12 @@ onMounted(fetchPosts)
             <p v-if="post.content" class="mt-1 line-clamp-2 text-sm text-muted-foreground">
               {{ post.content }}
             </p>
+            <img
+              v-if="post.image_url"
+              :src="post.image_url"
+              :alt="post.title"
+              class="mt-2 max-h-64 w-full rounded-md border object-cover"
+            />
             <div class="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
               <RouterLink
                 :to="{ name: 'user-profile', params: { id: post.user.id } }"

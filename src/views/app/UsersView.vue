@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Loader2, UserCheck, UserPlus, Users } from '@lucide/vue'
 import api from '@/apis'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useAuthStore } from '@/stores/auth'
@@ -11,6 +11,7 @@ const authStore = useAuthStore()
 interface User {
   id: string
   username: string
+  avatar_url?: string | null
   first_name: string
   last_name: string
   email: string
@@ -81,6 +82,7 @@ onMounted(fetchUsers)
       <Card v-for="user in users" :key="user.id" class="transition-shadow hover:shadow-md">
         <CardContent class="flex items-center gap-4">
           <Avatar class="size-10">
+            <AvatarImage v-if="user.avatar_url" :src="user.avatar_url" :alt="user.username" />
             <AvatarFallback>{{ user.first_name[0] }}{{ user.last_name[0] }}</AvatarFallback>
           </Avatar>
 

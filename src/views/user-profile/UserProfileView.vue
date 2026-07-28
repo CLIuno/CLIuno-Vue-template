@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Loader2, UserCheck, UserPlus } from '@lucide/vue'
 import api from '@/apis'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -13,6 +13,7 @@ const authStore = useAuthStore()
 interface User {
   id: string
   username: string
+  avatar_url?: string | null
   first_name: string
   last_name: string
   email: string
@@ -88,6 +89,7 @@ onMounted(loadProfile)
         <CardContent>
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <Avatar class="size-20">
+              <AvatarImage v-if="user.avatar_url" :src="user.avatar_url" :alt="user.username" />
               <AvatarFallback class="text-2xl">
                 {{ user.first_name[0] }}{{ user.last_name[0] }}
               </AvatarFallback>
@@ -143,6 +145,7 @@ onMounted(loadProfile)
               class="flex items-center gap-2 rounded-full bg-muted py-1 pr-3 pl-1 text-sm transition-colors hover:bg-accent"
             >
               <Avatar class="size-6">
+                <AvatarImage v-if="f.avatar_url" :src="f.avatar_url" :alt="f.username" />
                 <AvatarFallback class="text-xs">{{ f.first_name[0] }}</AvatarFallback>
               </Avatar>
               <span>{{ f.username }}</span>
@@ -163,6 +166,7 @@ onMounted(loadProfile)
               class="flex items-center gap-2 rounded-full bg-muted py-1 pr-3 pl-1 text-sm transition-colors hover:bg-accent"
             >
               <Avatar class="size-6">
+                <AvatarImage v-if="f.avatar_url" :src="f.avatar_url" :alt="f.username" />
                 <AvatarFallback class="text-xs">{{ f.first_name[0] }}</AvatarFallback>
               </Avatar>
               <span>{{ f.username }}</span>

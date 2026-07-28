@@ -2,6 +2,7 @@ import http from './http'
 
 const userApi = {
   getCurrentUser: () => http.get('/users/current'),
+  updateCurrentUser: (userData: any) => http.patch('/users/current', userData),
   getUsers: () => http.get('/users'),
   getUserByUsername: (username: string) => http.get(`/users/username/${username}`),
   getUserById: (id: string) => http.get(`/users/${id}`),
